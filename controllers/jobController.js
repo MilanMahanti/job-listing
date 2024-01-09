@@ -12,14 +12,33 @@ exports.createJob = catchAsync(async (req, res, next) => {
 });
 
 exports.getAllJobs = catchAsync(async (req, res, next) => {
-  const jobs = await Job.find();
+  const queryObj = { ...req.query };
+  const query = Job.find();
+
+  if (queryObj.jobPosition && typeof queryObj.jobPosition === "string") {
+    const regex = new RegExp(queryObj.jobPosition, "i");
+    query
+      .find({
+        jobPosition: { $regex: regex },
+      })
+      .collation({ locale: "en", strength: 2 });
+  }
+
+  if (queryObj.skills && typeof queryObj.skills === "string") {
+    const skillsArr = queryObj.skills
+      .split(",")
+      .map((el) => el.trim().toLowerCase());
+    query.find({
+      skills: { $in: skillsArr.map((skill) => new RegExp(skill, "i")) },
+    });
+  }
+
+  const jobs = await query;
 
   res.status(200).json({
     status: "success",
-    length: jobs.length,
-    data: {
-      jobs,
-    },
+    results: jobs.length,
+    data: { jobs },
   });
 });
 

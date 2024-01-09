@@ -59,5 +59,20 @@ const jobSchema = mongoose.Schema(
   { timestamps: true }
 );
 
+jobSchema.pre("save", function (next) {
+  this.skills = [...this.skills[0].split(",").map((el) => el.trim())];
+  this.createdAt = Date.now();
+
+  next();
+});
+
+jobSchema.pre("updateOne", function (next) {
+  const data = this.getUpdate();
+  if (data.skills) {
+    data.skills = data.skills.split(",").map((el) => el.trim());
+  }
+
+  next();
+});
 const JobModel = mongoose.model("Job", jobSchema);
 module.exports = JobModel;

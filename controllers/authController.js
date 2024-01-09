@@ -32,8 +32,8 @@ const createAndSendToken = (user, statuscode, res) => {
 };
 
 exports.register = catchAsync(async (req, res, next) => {
-  const { name, email, mobileNo, password } = req.body;
-  const user = await User.create({ name, email, mobileNo, password });
+  const { name, email, mobile, password } = req.body;
+  const user = await User.create({ name, email, mobile, password });
   createAndSendToken(user, 201, res);
 });
 

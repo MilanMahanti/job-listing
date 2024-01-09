@@ -13,7 +13,7 @@ const userSchema = new mongoose.Schema({
     required: [true, "Email cant be empty"],
     unique: true,
   },
-  mobileNo: {
+  mobile: {
     type: String,
     required: [true, "User need to provide a phone no."],
   },
